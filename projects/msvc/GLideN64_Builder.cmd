@@ -38,12 +38,14 @@ for %%P in (%*) do (
 	if /i "%%P"=="--nopjqt" set DPJQT=1
 REM	if /i "%%P"=="--nomqt" set DMQT=1
 REM	if /i "%%P"=="--noqt" set DPJQT=1& set DMQT=1
-	if /i "%%P"=="--nopjwtl" set DPJWTL=1
+REM	if /i "%%P"=="--nopjwtl" set DPJWTL=1
 	if /i "%%P"=="--nomcl" set DMCL=1
 	if /i "%%P"=="--dlqt" set DQTD=0
 	if /i "%%P"=="--sim" set ESIM=1
 	if /i "%%P"=="--q" set EBQ=REM
 )
+
+set DPJWTL=0
 
 set /a TSK=%EX86%+%EX64%
 if %TSK%==0 goto help
@@ -135,14 +137,14 @@ if defined TOOLSET set "IDTS="-%TOOLSET%%IDTS%""
 set IDTS=%IDTS:"=%
 set "PJ64QT=%BUILDROUTE%\%REV%Project64-Qt%IDTS%"
 ::set "M64QT=%BUILDROUTE%\%REV%Mupen64Plus-Qt%IDTS%"
-set "PJ64WTL=%BUILDROUTE%\%REV%Project64-WTL%IDTS%"
+::set "PJ64WTL=%BUILDROUTE%\%REV%Project64-WTL%IDTS%"
 set "M64CL=%BUILDROUTE%\%REV%Mupen64Plus-CLI%IDTS%"
 
 set MOD=
 if "%ARCH%"=="x64" set MOD=_x64
 set "PJ64PluginsDirQT%MOD%=%PJ64QT%"
 ::set "Mupen64PluginsDirQT%MOD%=%M64QT%"
-set "PJ64PluginsDirWTL%MOD%=%PJ64WTL%"
+::set "PJ64PluginsDirWTL%MOD%=%PJ64WTL%"
 set "Mupen64PluginsDir%MOD%=%M64CL%"
 
 set MOD=%RANDOM:~-1%
@@ -183,19 +185,19 @@ goto mbbeg
 set MSG=Qt version, architecture and path are really correct?^& echo %QTDIR%
 call :mbcl "%BPJQT%" "GLideNUI.vcxproj"
 %DMN%
-call :mbcl "%BPJQT%" "%FPROJ%" "_qt"
+call :mbcl "%BPJQT%" "%FPROJ%" ""
 %DMN%
 
 ::if %DPJQT%==1 call :mbcl "%BMQT%" "GLideNUI.vcxproj"
 %DMN%
-::call :mbcl "%BMQT%" "%FPROJ%" "_mupenplus_qt"
+::call :mbcl "%BMQT%" "%FPROJ%" "_mupenplus"
 %DMN%
 
-set MSG=ERROR!
-call :mbcl "%BPJWTL%" "GLideNUI-wtl.vcxproj"
-%DMN%
-call :mbcl "%BPJWTL%" "%FPROJ%" "_wtl"
-%DMN%
+::set MSG=ERROR!
+::call :mbcl "%BPJWTL%" "GLideNUI-wtl.vcxproj"
+::%DMN%
+::call :mbcl "%BPJWTL%" "%FPROJ%" "_wtl"
+::%DMN%
 
 call :mbcl "%BMCL%" "%FPROJ%" "_mupenplus"
 %DMN%
@@ -226,13 +228,13 @@ if %DMQT%==1 goto pjwtl
 %ERR%
 
 :pjwtl
-if %DPJWTL%==1 goto mcl
-call :cini "%PJ64WTL%"
-%DMN%
-md "%PJ64WTL%\translations" 2>nul
-type nul
-copy /y translations\wtl\*.Lang "%PJ64WTL%\translations\"
-%ERR%
+::if %DPJWTL%==1 goto mcl
+::call :cini "%PJ64WTL%"
+::%DMN%
+::md "%PJ64WTL%\translations" 2>nul
+::type nul
+::copy /y translations\wtl\*.Lang "%PJ64WTL%\translations\"
+::%ERR%
 
 :mcl
 if %DMCL%==1 goto pkg
@@ -308,7 +310,7 @@ echo               version has already been extracted
 ::echo               Qt variables and '--dlqt'
 echo   --nopjqt    To skip Project64 Qt builds
 ::echo   --nomqt     To skip Mupen64Plus Qt builds
-echo   --nopjwtl   To skip Project64 WTL builds
+::echo   --nopjwtl   To skip Project64 WTL builds
 echo   --nomcl     To skip Mupen64Plus CLI builds
 echo   --nopak     To skip packing the binaries, '--zip' will be ineffective
 echo               It will disable 7-Zip completely if '--dlqt' isn't used
@@ -331,5 +333,6 @@ echo   %~nx0 --nopjqt --x64
 echo.
 echo   set QTDIR_x86="G:\Static Qt\qt-5.7.1-x86-msvc2015"
 echo   set QTDIR_x64=G:\Static Qt\qt-5.7.1-x64-msvc2015
-echo   %~nx0 --nopjwtl --nomcl --all
+::echo   %~nx0 --nopjwtl --nomcl --all
+echo   %~nx0 --nomcl --all
 %EXIT% 0
